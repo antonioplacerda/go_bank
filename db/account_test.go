@@ -1,28 +1,26 @@
 package db
 
 import (
-	"database/sql"
-	"log"
-	"os"
+	"context"
 	"testing"
 
-	_ "github.com/lib/pq"
+	"github.com/stretchr/testify/require"
 )
 
-const (
-	dbDriver = "postgres"
-	dbSource = "postgresql://root:secret@localhost:5432/simple_bank?sslmode=disable"
-)
-
-var testQueries *Queries
-
-func TestMain(m *testing.M) {
-	conn, err := sql.Open(dbDriver, dbSource)
-	if err != nil {
-		log.Fatal("cannot connect to db:", err)
+func TestCreateAccount(t *testing.T) {
+	arg := CreateAccountParams{
+		Owner:    "tom",
+		Balance:  100,
+		Currency: "USD",
 	}
 
-	testQueries = New(conn)
+	account, err := testQueries.CreateAccount(context.Background(), arg)
 
-	os.Exit(m.Run())
+	require.NoError(t, err)
+	require.NotEmpty(t, account)
+	require.Equal(t, arg.Owner, account.Owner)
+	require.Equal(t, arg.Balance, account.Balance)
+	require.Equal(t, arg.Currency, account.Currency)
+	require.NotZero(t, account.ID)
+	require.NotZero(t, account.CreatedAt)
 }
