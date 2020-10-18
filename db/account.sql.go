@@ -14,7 +14,7 @@ insert into accounts (
   currency
 ) values (
   $1, $2, $3
-) returning id
+) returning id, owner, balance, currency, created_at
 `
 
 type CreateAccountParams struct {
@@ -23,11 +23,17 @@ type CreateAccountParams struct {
 	Currency string `json:"currency"`
 }
 
-func (q *Queries) CreateAccount(ctx context.Context, arg CreateAccountParams) (int64, error) {
+func (q *Queries) CreateAccount(ctx context.Context, arg CreateAccountParams) (Account, error) {
 	row := q.db.QueryRowContext(ctx, createAccount, arg.Owner, arg.Balance, arg.Currency)
-	var id int64
-	err := row.Scan(&id)
-	return id, err
+	var i Account
+	err := row.Scan(
+		&i.ID,
+		&i.Owner,
+		&i.Balance,
+		&i.Currency,
+		&i.CreatedAt,
+	)
+	return i, err
 }
 
 const deleteAccount = `-- name: DeleteAccount :exec
