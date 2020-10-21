@@ -42,3 +42,10 @@ select *
   limit 1
   for update
 ;
+
+-- name: AddAccountBalance :one
+update accounts
+  set balance = balance + $1
+  where id = $2
+  returning *
+;
