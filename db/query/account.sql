@@ -45,7 +45,7 @@ select *
 
 -- name: AddAccountBalance :one
 update accounts
-  set balance = balance + $1
-  where id = $2
+  set balance = balance + sqlc.arg(amount)
+  where id = sqlc.arg(id)
   returning *
 ;

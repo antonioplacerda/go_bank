@@ -15,12 +15,12 @@ update accounts
 `
 
 type AddAccountBalanceParams struct {
-	Balance int64 `json:"balance"`
-	ID      int64 `json:"id"`
+	Amount int64 `json:"amount"`
+	ID     int64 `json:"id"`
 }
 
 func (q *Queries) AddAccountBalance(ctx context.Context, arg AddAccountBalanceParams) (Account, error) {
-	row := q.db.QueryRowContext(ctx, addAccountBalance, arg.Balance, arg.ID)
+	row := q.db.QueryRowContext(ctx, addAccountBalance, arg.Amount, arg.ID)
 	var i Account
 	err := row.Scan(
 		&i.ID,
